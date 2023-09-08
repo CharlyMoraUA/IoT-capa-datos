@@ -13,4 +13,6 @@ urlpatterns = [
     path("login/", LoginView.as_view(), name="login"),
     path("logout/", LogoutView.as_view(), name="logout"),
     path("historical/data", download_csv_data, name="historical-data"),
+    path("mapSummaryJson/", get_map_summary_json, name="mapSummaryJson"),
+    path("mapSummaryJson/<str:measure>", get_map_summary_json, name="mapSummaryJson")
 ]
