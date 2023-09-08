@@ -600,13 +600,13 @@ def get_map_summary_json(request, **kwargs):
         start = datetime.fromtimestamp(0)
     start_ts = int(start.timestamp() * 1000000)
     end_ts = int(end.timestamp() * 1000000)
-    print("good timing")
+
     data = []
 
     for location in locations:
         stations = Station.objects.filter(location=location)
         locationData = Data.objects.filter(
-            station__in=stations, measurement__name=selectedMeasure.name,  time__gte=start_ts, time__lte=end_ts).values('time').annotate(dailyAvg=Avg('avg_value')).order_by('time')
+            station__in=stations, measurement__name=selectedMeasure.name,  time__gte=start_ts, time__lte=end_ts).values('time', 'avg_value').order_by('time')
         if locationData.count() <= 0:
             continue
         # avg_value, base_time, length, max_value, measurement, measurement_id, min_value, station, station_id, time, times, values
@@ -616,7 +616,7 @@ def get_map_summary_json(request, **kwargs):
                 'lat': location.lat,
                 'lng': location.lng,
                 'date': datetime.fromtimestamp((item['time'])/1000000).strftime("%d/%m/%Y, %H:%M:%S"),
-                'avg': round(item['dailyAvg'] if item['dailyAvg']  != None else 0, 2),
+                'avg_value':item["avg_value"]
             })
 
     startFormatted = start.strftime("%d/%m/%Y") if start != None else " "
